@@ -1,16 +1,16 @@
 // ui.js
 // 画面表示・UI更新
 
-function updateCostDisplay() {
+const updateCostDisplay = () => {
     ["oven", "auto", "yield"].forEach(type => {
         const level = type === "oven" ? rarityBias : type === "auto" ? autoCollectLevel : yieldBonus - 1;
         const cost = getUpgradeCost(type, level);
         document.getElementById(`cost-${type}`).textContent =
             "コスト: " + Object.entries(cost).map(([mat, n]) => `${mat}${n}`).join(", ");
     });
-}
+};
 
-function updateDisplay() {
+const updateDisplay = () => {
     // 素材表示
     document.getElementById("materials").innerHTML =
         materials.map(mat => `${mat}: ${inventory[mat]}`).join("<br>");
@@ -23,4 +23,4 @@ function updateDisplay() {
     // 賢者の石表示
     document.getElementById("philosopher-stone-count").textContent =
         `賢者の石: ${inventory["賢者の石"] || 0}`;
-}
+};

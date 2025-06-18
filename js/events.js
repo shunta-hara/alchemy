@@ -4,17 +4,17 @@
 // 連続アップグレード用タイマーIDを保持するオブジェクト
 const upgradeIntervals = {};
 
-function startContinuousUpgrade(buttonId, upgradeFunc) {
+const startContinuousUpgrade = (buttonId, upgradeFunc) => {
     upgradeFunc();
     upgradeIntervals[buttonId] = setTimeout(function repeat() {
         upgradeFunc();
         upgradeIntervals[buttonId] = setTimeout(repeat, 200);
     }, 500);
-}
+};
 
-function stopContinuousUpgrade(buttonId) {
+const stopContinuousUpgrade = (buttonId) => {
     clearTimeout(upgradeIntervals[buttonId]);
-}
+};
 
 document.getElementById("alchemic-oven").addEventListener("click", function () {
     addMaterial();
@@ -41,6 +41,9 @@ combineBtn.addEventListener("mousedown", () => startContinuousUpgrade("combine-b
 combineBtn.addEventListener("mouseup", () => stopContinuousUpgrade("combine-btn"));
 combineBtn.addEventListener("mouseleave", () => stopContinuousUpgrade("combine-btn"));
 
+const reincarnateBtn = document.getElementById("reincarnate-btn");
+reincarnateBtn.addEventListener("click", reincarnate);
+
 // 自動素材入手
 setInterval(() => {
     for (let i = 0; i < autoCollectLevel; i++) {
@@ -48,13 +51,6 @@ setInterval(() => {
         updateDisplay();
     }
 }, 3000);
-
-function _resetGame() {
-    if (confirm("ゲームデータをリセットしますか？")) {
-        localStorage.removeItem("alchemySave");
-        location.reload();
-    }
-}
 
 // 初期化
 window.addEventListener("DOMContentLoaded", function () {

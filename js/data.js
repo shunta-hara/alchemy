@@ -17,7 +17,7 @@ const baseCosts = {
 materials.forEach(mat => inventory[mat] = 0);
 inventory["賢者の石"] = 0;
 
-function getMaterial() {
+const getMaterial = () => {
     const weights = materials.map((_, i) => {
         const diff = i - rarityBias;
         return 1 / (1 + Math.exp(diff)); // シグモイド関数風
@@ -29,18 +29,18 @@ function getMaterial() {
         if (rand < 0) return materials[i];
     }
     return materials[0];
-}
+};
 
-function saveGame() {
+const saveGame = () => {
     localStorage.setItem("alchemySave", JSON.stringify({
         inventory,
         rarityBias,
         autoCollectLevel,
         yieldBonus
     }));
-}
+};
 
-function loadGame() {
+const loadGame = () => {
     const saved = localStorage.getItem("alchemySave");
     if (saved) {
         const data = JSON.parse(saved);
@@ -51,10 +51,10 @@ function loadGame() {
     } else {
         materials.forEach(mat => { inventory[mat] = 0; });
     }
-}
+};
 
-function addMaterial() {
+const addMaterial = () => {
     const mat = getMaterial();
     inventory[mat] += yieldBonus;
     saveGame();
-}
+};

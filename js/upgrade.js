@@ -1,7 +1,7 @@
 // upgrade.js
 // アップグレード・合成処理
 
-function getUpgradeCost(type, level) {
+const getUpgradeCost = (type, level) => {
     const multiplier = 1.3 ** level;
     const baseCost = baseCosts[type];
     let cost = {};
@@ -9,19 +9,19 @@ function getUpgradeCost(type, level) {
         cost[mat] = Math.ceil(baseCost[mat] * multiplier);
     }
     return cost;
-}
+};
 
-function canAfford(cost) {
+const canAfford = (cost) => {
     return Object.entries(cost).every(([mat, n]) => inventory[mat] >= n);
-}
+};
 
-function payCost(cost) {
+const payCost = (cost) => {
     Object.entries(cost).forEach(([mat, n]) => {
         inventory[mat] -= n;
     });
-}
+};
 
-function tryUpgrade(type, levelRef, costType, stopId, msg) {
+const tryUpgrade = (type, levelRef, costType, stopId, msg) => {
     const cost = getUpgradeCost(costType, levelRef());
     if (canAfford(cost)) {
         payCost(cost);
@@ -35,19 +35,19 @@ function tryUpgrade(type, levelRef, costType, stopId, msg) {
         stopContinuousUpgrade(stopId);
         showToast(msg);
     }
-}
+};
 
-function upgradeOven() {
+const upgradeOven = () => {
     tryUpgrade("oven", () => rarityBias, "oven", "upgrade-oven", "素材が足りません！");
-}
-function upgradeAuto() {
+};
+const upgradeAuto = () => {
     tryUpgrade("auto", () => autoCollectLevel, "auto", "upgrade-auto", "素材が足りません！");
-}
-function upgradeYield() {
+};
+const upgradeYield = () => {
     tryUpgrade("yield", () => yieldBonus - 1, "yield", "upgrade-yield", "素材が足りません！");
-}
+};
 
-function combine() {
+const combine = () => {
     if (inventory["金"] >= 3) {
         inventory["金"] -= 3;
         inventory["賢者の石"] = (inventory["賢者の石"] || 0) + 1;
@@ -58,4 +58,22 @@ function combine() {
         stopContinuousUpgrade("combine-btn");
         showToast("金が足りません！");
     }
-}
+};
+
+const reincarnate = () => {
+    if ((inventory["賢者の石"] || 0) >= 100) {
+        inventory["賢者の石"] -= 100;
+        // 転生時のリセット処理
+        materials.forEach(mat => inventory[mat] = 0);
+        rarityBias = 0;
+        autoCollectLevel = 0;
+        yieldBonus = 1;
+        saveGame();
+        updateDisplay();
+        updateCostDisplay();
+        showToast("転生しました！新たな力を手に入れよう！");
+        // TODO: 転生特典を追加する
+    } else {
+        showToast("賢者の石が足りません！（100個必要）");
+    }
+};

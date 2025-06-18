@@ -1,24 +1,30 @@
 // utils.js
 // トースト表示、ダークモード
 
-function showToast(msg) {
+let toastTimeoutId; // トースト用タイマーID
+
+const showToast = (msg) => {
     const toast = document.getElementById("toast");
     toast.textContent = msg;
     toast.classList.remove("hidden");
-    setTimeout(() => toast.classList.add("hidden"), 2000);
-}
+    if (toastTimeoutId) clearTimeout(toastTimeoutId); // 既存タイマーをクリア
+    toastTimeoutId = setTimeout(() => {
+        toast.classList.add("hidden");
+        toastTimeoutId = null;
+    }, 2000);
+};
 
-function toggleDarkMode() {
+const toggleDarkMode = () => {
     document.body.classList.toggle("dark");
     saveDarkMode();
-}
+};
 
-function saveDarkMode() {
+const saveDarkMode = () => {
     localStorage.setItem("alchemyDarkMode", document.body.classList.contains("dark") ? "on" : "off");
-}
+};
 
-function loadDarkMode() {
+const loadDarkMode = () => {
     if (localStorage.getItem("alchemyDarkMode") === "on") {
         document.body.classList.add("dark");
     }
-}
+};
