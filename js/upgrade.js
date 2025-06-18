@@ -47,13 +47,31 @@ const upgradeYield = () => {
     tryUpgrade("yield", () => yieldBonus - 1, "yield", "upgrade-yield", "素材が足りません！");
 };
 
+const calculateSuccessRate = (reincarnationCount) => {
+    const R = 0.05;
+    const baseRate = 10; // 最低成功率
+    const maxGain = 90;  // 増加できる上限値 (100 - 10)
+
+    const rate = baseRate + maxGain * (1 - Math.exp(-R * reincarnationCount));
+    const successRate = Math.floor(rate * 10) / 10; // 小数第1位で切り捨て
+    return successRate / 100;
+};
+
 const combine = () => {
     if (inventory["金"] >= 3) {
         inventory["金"] -= 3;
-        inventory["賢者の石"] = (inventory["賢者の石"] || 0) + 1;
-        updateDisplay();
-        saveGame();
-        showToast("賢者の石を生成しました！");
+        // 一定の確率で成功
+        const successRate = calculateSuccessRate(reincarnationCount);
+        if (Math.random() < successRate) {
+            inventory["賢者の石"] = (inventory["賢者の石"] || 0) + 1;
+            updateDisplay();
+            saveGame();
+            showToast("賢者の石を生成しました！");
+        } else {
+            updateDisplay();
+            saveGame();
+            showToast("合成に失敗しました…金が消費されました。");
+        }
     } else {
         stopContinuousUpgrade("combine-btn");
         showToast("金が足りません！");
@@ -68,11 +86,12 @@ const reincarnate = () => {
         rarityBias = 0;
         autoCollectLevel = 0;
         yieldBonus = 1;
+        reincarnationCount += 1;
+
         saveGame();
         updateDisplay();
         updateCostDisplay();
-        showToast("転生しました！新たな力を手に入れよう！");
-        // TODO: 転生特典を追加する
+        showToast("転生しました！賢者の石の合成成功率UP！");
     } else {
         showToast("賢者の石が足りません！（100個必要）");
     }

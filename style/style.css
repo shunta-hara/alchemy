@@ -22,7 +22,6 @@ body.dark {
 body {
     font-family: 'UnifrakturCook', cursive;
     margin: 0;
-    padding: 30px;
     justify-content: center;
     background: var(--bg-color) url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
     color: var(--text-color);
@@ -105,6 +104,22 @@ button:hover {
     transform: scale(1.05);
 }
 
+button:disabled {
+    opacity: 0.5;
+    filter: grayscale(60%);
+    cursor: not-allowed;
+    box-shadow: none;
+    background: #888 !important;
+    color: #eee !important;
+}
+
+button:disabled:hover {
+    box-shadow: none;
+    transform: none;
+    background: #888 !important;
+    color: #eee !important;
+}
+
 /* ダークモード切替ボタン */
 button[onclick="toggleDarkMode()"] {
     float: right;
@@ -146,17 +161,24 @@ button[onclick="toggleDarkMode()"] {
 }
 
 #toast {
-    font-weight: bold;
     position: fixed;
-    bottom: 10px;
-    right: 10px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: 1px solid #fff;
-    background: rgba(50, 50, 50, 0.9);
+    left: 50%;
+    bottom: 80px; /* フッターの高さ+余白分 */
+    transform: translateX(-50%);
+    background: #333;
     color: #fff;
-    box-shadow: 0 0 10px black;
-    animation: slideUp 0.3s ease-out;
+    padding: 0.7em 2em;
+    border-radius: 8px;
+    font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 2000;
+    opacity: 0.95;
+    transition: opacity 0.3s;
+}
+
+#toast.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .hidden {
@@ -213,4 +235,18 @@ button[onclick="toggleDarkMode()"] {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: rgba(40, 44, 52, 0.95);
+    color: #888;
+    text-align: center;
+    padding: 0.7em 0 0.5em 0;
+    font-size: 1em;
+    z-index: 100;
+    font-family: sans-serif !important;
 }

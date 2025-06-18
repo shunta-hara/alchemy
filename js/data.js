@@ -6,6 +6,7 @@ let inventory = {};
 let rarityBias = 0;
 let autoCollectLevel = 0;
 let yieldBonus = 1;
+let reincarnationCount = 0;
 
 // 基本コスト（初期コスト）
 const baseCosts = {
@@ -36,7 +37,8 @@ const saveGame = () => {
         inventory,
         rarityBias,
         autoCollectLevel,
-        yieldBonus
+        yieldBonus,
+        reincarnationCount
     }));
 };
 
@@ -48,6 +50,7 @@ const loadGame = () => {
         rarityBias = data.rarityBias ?? 0;
         autoCollectLevel = data.autoCollectLevel ?? 0;
         yieldBonus = data.yieldBonus ?? 1;
+        reincarnationCount = data.reincarnationCount ?? 0;
     } else {
         materials.forEach(mat => { inventory[mat] = 0; });
     }
