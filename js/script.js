@@ -1,4 +1,3 @@
-
 const materials = ["銅", "鉄", "錫", "鉛", "水銀", "銀", "金"];
 let inventory = {};
 let rarityBias = 0;
@@ -31,28 +30,27 @@ function getMaterial() {
 
 // コストを表示する関数
 function updateCostDisplay() {
-    const ovenCost = getUpgradeCost("oven", rarityBias);
-    const autoCost = getUpgradeCost("auto", autoCollectLevel);
-    const yieldCost = getUpgradeCost("yield", yieldBonus - 1);
-
-    document.getElementById("cost-oven").textContent = "コスト: " + Object.entries(ovenCost).map(([mat, n]) => `${mat}${n}`).join(", ");
-    document.getElementById("cost-auto").textContent = "コスト: " + Object.entries(autoCost).map(([mat, n]) => `${mat}${n}`).join(", ");
-    document.getElementById("cost-yield").textContent = "コスト: " + Object.entries(yieldCost).map(([mat, n]) => `${mat}${n}`).join(", ");
+    ["oven", "auto", "yield"].forEach(type => {
+        const level = type === "oven" ? rarityBias : type === "auto" ? autoCollectLevel : yieldBonus - 1;
+        const cost = getUpgradeCost(type, level);
+        document.getElementById(`cost-${type}`).textContent =
+            "コスト: " + Object.entries(cost).map(([mat, n]) => `${mat}${n}`).join(", ");
+    });
 }
 
 function updateDisplay() {
-    const matDiv = document.getElementById("materials");
-    matDiv.innerHTML = materials.map(mat =>
-        `${mat}: ${inventory[mat]}`
-    ).join("<br>");
+    // 素材表示
+    document.getElementById("materials").innerHTML =
+        materials.map(mat => `${mat}: ${inventory[mat]}`).join("<br>");
 
-    // アップグレードレベルの表示を更新
+    // アップグレードレベル表示
     document.getElementById("upgrade-oven").textContent = `錬金窯強化（Lv.${rarityBias}）`;
     document.getElementById("upgrade-auto").textContent = `自動化強化（Lv.${autoCollectLevel}）`;
     document.getElementById("upgrade-yield").textContent = `素材取得量強化（Lv.${yieldBonus}）`;
 
-    // 賢者の石の表示（存在しない場合は0として表示）
-    document.getElementById("philosopher-stone-count").textContent = `賢者の石: ${inventory["賢者の石"] || 0}`;
+    // 賢者の石表示
+    document.getElementById("philosopher-stone-count").textContent =
+        `賢者の石: ${inventory["賢者の石"] || 0}`;
 }
 
 function addMaterial() {
@@ -86,47 +84,31 @@ function payCost(cost) {
     });
 }
 
+function tryUpgrade(type, levelRef, costType, stopId, msg) {
+    const cost = getUpgradeCost(costType, levelRef());
+    if (canAfford(cost)) {
+        payCost(cost);
+        if (costType === "yield") yieldBonus++;
+        else if (costType === "auto") autoCollectLevel++;
+        else if (costType === "oven") rarityBias++;
+        updateDisplay();
+        updateCostDisplay();
+        saveGame();
+    } else {
+        stopContinuousUpgrade(stopId);
+        showToast(msg);
+    }
+}
+
 function upgradeOven() {
-    const cost = getUpgradeCost("oven", rarityBias);
-    if (canAfford(cost)) {
-        payCost(cost);
-        rarityBias++;
-        updateDisplay();
-        updateCostDisplay();
-        saveGame();
-    } else {
-        stopContinuousUpgrade("upgrade-oven");
-        alert("素材が足りません！");
-    }
-};
-
+    tryUpgrade("oven", () => rarityBias, "oven", "upgrade-oven", "素材が足りません！");
+}
 function upgradeAuto() {
-    const cost = getUpgradeCost("auto", autoCollectLevel);
-    if (canAfford(cost)) {
-        payCost(cost);
-        autoCollectLevel++;
-        updateDisplay();
-        updateCostDisplay();
-        saveGame();
-    } else {
-        stopContinuousUpgrade("upgrade-auto");
-        alert("素材が足りません！");
-    }
-};
-
+    tryUpgrade("auto", () => autoCollectLevel, "auto", "upgrade-auto", "素材が足りません！");
+}
 function upgradeYield() {
-    const cost = getUpgradeCost("yield", yieldBonus - 1);
-    if (canAfford(cost)) {
-        payCost(cost);
-        yieldBonus++;
-        updateDisplay();
-        updateCostDisplay();
-        saveGame();
-    } else {
-        stopContinuousUpgrade("upgrade-yield");
-        alert("素材が足りません！");
-    }
-};
+    tryUpgrade("yield", () => yieldBonus - 1, "yield", "upgrade-yield", "素材が足りません！");
+}
 
 function combine() {
     if (inventory["金"] >= 3) {
@@ -137,7 +119,7 @@ function combine() {
         showToast("賢者の石を生成しました！");
     } else {
         stopContinuousUpgrade("combine-btn");
-        alert("金が足りません！");
+        showToast("金が足りません！");
     }
 };
 
@@ -168,7 +150,6 @@ function saveGame() {
         autoCollectLevel,
         yieldBonus
     }));
-    showToast("保存しました！");
 }
 
 function loadGame() {
@@ -180,7 +161,7 @@ function loadGame() {
         autoCollectLevel = data.autoCollectLevel ?? 0;
         yieldBonus = data.yieldBonus ?? 1;
     } else {
-        materials.map(mat => { inventory[mat] = 0 });
+        materials.forEach(mat => { inventory[mat] = 0; });
     }
     updateDisplay();
     updateCostDisplay();
