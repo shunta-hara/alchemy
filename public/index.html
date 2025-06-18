@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>アルケミスト・クリッカー</title>
+    <link rel=”icon” href=“favicon.ico”>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+
+<body>
+    <header id="header">
+        <h1>アルケミスト・クリッカー</h1>
+        <div style="text-align: right;">
+            <button id="dark-mode-toggle" onclick="toggleDarkMode()">🌓 ダークモード切替</button>
+        </div>
+    </header>
+    <div class="container">
+        <div id="oven-container">
+            <button id="alchemic-oven">
+                <img src="alchemist-oven.png" alt="錬金窯" />
+            </button>
+        </div>
+        <div id="left-panel">
+            <div id="materials"></div>
+            <div id="philosopher-stone-count">賢者の石: 0</div>
+
+            <h2>錬金合成</h2>
+            <div class="centered">
+                <button id="combine-btn">素材を合成する</button>
+            </div>
+        </div>
+
+        <div id="right-panel">
+            <h2>アップグレード</h2>
+            <div class="centered">
+                <button id="upgrade-oven">錬金窯強化（Lv.0）</button>
+                <span id="cost-oven">コスト: 銅10, 鉄5</span>
+            </div>
+            <div class="centered">
+                <button id="upgrade-auto">自動化強化（Lv.0）</button>
+                <span id="cost-auto">コスト: 錫10, 鉛5</span>
+            </div>
+            <div class="centered">
+                <button id="upgrade-yield">素材取得量強化（Lv.1）</button>
+                <span id="cost-yield">コスト: 水銀10, 銀5</span>
+            </div>
+        </div>
+
+    </div>
+    <div id="toast" class="hidden">保存しました！</div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
